@@ -45,7 +45,7 @@ const L=[
 const mul=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 const ADJ=['Wicked','Sneaky','Twisty','Spiky','Slippery','Wobbly','Sharp','Chaotic','Tricky','Nasty'],NOU=['Run','Path','Alley','Climb','Dash','Gauntlet','Corridor','Trial','Maze','Rush'];
 const HR={spike:'Sharp edges, short memory.',saw:'Teeth keep time.',vsaw:'Teeth that bob. Watch the pulse.',step:'A long fall needs a stepping stone.',gap:'Some floors ended early.',spring:'Bounce before you leap.',hidden:'Empty ground can bite.',mov:'The bridge moves; so should you.',crumble:'Rest is a luxury.',wall:'Two walls, one shortcut?',flip:'Left is right today.',rot:'The buttons swapped jobs.',low:'The air is generous.',ice:'Walk like the floor is wet.',key:'Something golden hides up high.',gate:'Press first, pass later.',portal:'Doors are not the only way through.'};
-function gen(i){const R=mul(i*7919+13),tier=Math.min(5,((i-19)/10)|0),n=3+Math.min(2,((i-19)/17)|0),x0=120,sw=(720-x0)/n,spd=()=>1.8+tier*.3+R()*.5;
+function gen(i){const R=mul(i*7919+13),tier=Math.min(5,((i-19)/10)|0),n=4+Math.min(1,((i-19)/25)|0),x0=120,sw=(720-x0)/n,spd=()=>1.9+tier*.35+R()*.6;
  const v={n:i==68?'Nice. 😎':ADJ[i%10]+' '+NOU[(i*3+((i/10)|0))%10],m:'',s:[40,370],d:[740,376],p:[],k:[],w:[],t:[],f:[],sp:[]},gaps=[],tg=[];
  const pool=['spike','saw','vsaw','step'].concat(tier>=1?['gap','spring','hidden']:[],tier>=2?['mov','crumble']:[]);
  const ty=Array.from({length:n},()=>pool[(R()*pool.length)|0]);
@@ -58,11 +58,11 @@ function gen(i){const R=mul(i*7919+13),tier=Math.min(5,((i-19)/10)|0),n=3+Math.m
   if(T=='gap'&&0){}
   if((T=='mov'&&sw<150)||(T=='spring'&&sw<150)||(T=='step'&&sw<150))T='spike';
   tg.push(T);
-  if(T=='spike'){const w=40+((R()*(25+tier*5))|0);v.k.push([c-w/2,410,w])}
+  if(T=='spike'){const w=46+((R()*(25+tier*5))|0);v.k.push([c-w/2,410,w])}
   if(T=='saw')v.w.push([c,392,18,1,0,Math.min(sw/2-24,60),spd()]);
   if(T=='vsaw'){v.w.push([sw>=150?sx+sw*.3:c,340,16,0,1,60,spd()]);if(sw>=150&&tier>=3)v.w.push([sx+sw*.7,340,16,0,1,60,spd()])}
   if(T=='step'){v.k.push([c-70,410,140]);v.p.push([c-40,340,80,15])}
-  if(T=='gap'){const g=70+tier*5;gaps.push([c-g/2,g])}
+  if(T=='gap'){const g=80+tier*4;gaps.push([c-g/2,g])}
   if(T=='crumble'){gaps.push([c-50,100]);v.p.push([c-35,400,70,15,1])}
   if(T=='mov'){gaps.push([c-70,140]);v.p.push([c-30,410,60,15,0,[c-30,40,1.6]])}
   if(T=='spring'){v.sp.push([sx+8,402]);v.k.push([sx+50,410,100])}
@@ -75,7 +75,7 @@ function gen(i){const R=mul(i*7919+13),tier=Math.min(5,((i-19)/10)|0),n=3+Math.m
  v.m=mods.join(' ');tg.push(...mods);
  v.h=[...new Set(tg)].slice(0,2).map(k=>HR[k]).filter(Boolean).join(' ');return v}
 for(let i=19;i<NL;i++)L.push(gen(i));
-let lv=0,t=0,deaths=Array(NL).fill(0),tot=0,P,D,tr={},cr={},K=0,O=0,pcd=0,key={l:0,r:0,j:0},jp=0,scr='menu',msg='',mt=0,air=1,coy=0,buf=0,hT=0,mx=0;
+let lv=0,t=0,deaths=Array(NL).fill(0),tot=0,P,D,tr={},cr={},K=0,O=0,pcd=0,E,key={l:0,r:0,j:0},jp=0,scr='menu',msg='',mt=0,air=1,coy=0,buf=0,hT=0,mx=0;
 try{mx=+localStorage.getItem('fr_max')||0}catch(e){}
 const LT=1200000,hu={};let lives=5,nxt=0,adT=0,adK='';
 try{const q=JSON.parse(localStorage.getItem('fr_l'));if(q){lives=q[0];nxt=q[1]}}catch(e){}
@@ -86,18 +86,37 @@ function addLife(){tick();if(lives<5){lives++;if(lives==5)nxt=0;sv()}}
 function reward(k){if(k=='hint'){hu[lv]=1;hT=320}else addLife()}
 function startAd(k){adK=k;if(window.showRewardedAd){window.showRewardedAd(()=>{reward(k);scr='play'});scr='ad';adT=1e9}else{scr='ad';adT=300}}
 const sol=p=>!((p[4]&&cr[p]>30)||(p[6]&&O)),A=()=>Math.min(deaths[lv],10),save=()=>{try{localStorage.setItem('fr_max',mx)}catch(e){}};
-function load(){const v=L[lv];P={x:v.s[0],y:v.s[1],vx:0,vy:0};D={x:v.d[0],y:v.d[1]};tr={};cr={};K=0;O=0;pcd=0;air=1;msg=v.n;mt=150;hT=0}
+function load(){const v=L[lv];P={x:v.s[0],y:v.s[1],vx:0,vy:0};D={x:v.d[0],y:v.d[1]};tr={};cr={};K=0;O=0;pcd=0;air=1;msg=v.n;mt=150;hT=0;mkE()}
+function mkE(){E={k:[],w:[],t:[],dy:[],wind:0,mod:''};const a=deaths[lv];if(!a)return;const v=L[lv],R=Math.random;
+ const fx=(lo,hi,w)=>{for(let q=0;q<30;q++){const X=lo+((R()*(hi-lo))|0);if(Math.abs(X-D.x)>70&&v.p.some(p=>p[1]==410&&!p[4]&&!p[5]&&X>=p[0]&&X+w<=p[0]+p[2]))return X}return -1};
+ const tw=[(lv*7+a-1)%10];if(a>=5){const b=(lv*3+a*5)%10;if(b!=tw[0])tw.push(b)}
+ for(const k of tw){let X;
+  if(k==0&&(X=fx(200,650,36))>0)E.t.push([X-80,X,410,36]);
+  if(k==1)E.w.push([400,392,18,1,0,330,2.4+R()*.8]);
+  if(k==2&&(X=fx(220,660,24))>0)E.dy.push({ty:'drop',x:X,y:-30,on:0});
+  if(k==3){X=fx(220,650,16);E.w.push([X>0?X:400,250,16,0,1,190,1.8+R()*.6])}
+  if(k==4)E.dy.push({ty:'chase',x:-40,y:392,d:120});
+  if(k==5)E.t.push([D.x-130,D.x-52,D.y+34,36]);
+  if(k==6)E.wind=(R()<.5?-1:1)*(.9+R()*.5);
+  if(k==7&&(X=fx(200,640,60))>0)E.dy.push({ty:'blink',x:X,w:60,ph:(R()*100)|0});
+  if(k==8&&(X=fx(220,680,10))>0)E.dy.push({ty:'laser',x:X,ph:(R()*120)|0});
+  if(k==9)E.mod=v.m.includes('flip')?'rot':'flip'}}
+const cc=(sx,sy,rr)=>{const cx=Math.max(P.x,Math.min(sx,P.x+20)),cy=Math.max(P.y,Math.min(sy,P.y+30));return(cx-sx)**2+(cy-sy)**2<rr*rr};
+function sd(sx,sy,r){x.save();x.translate(sx,sy);x.rotate(t*.2);x.beginPath();for(let i=0;i<12;i++){const q=i%2?r-5:r+3,an=i/12*6.283;x.lineTo(Math.cos(an)*q,Math.sin(an)*q)}x.fillStyle='#1a1010';x.fill();x.fillStyle='#c4623f';x.fillRect(-3,-3,6,6);x.restore()}
+function drawDy(){for(const o of E.dy){
+ if(o.ty=='drop'&&o.on){x.fillStyle='#1a1010';for(let i=0;i<2;i++){x.beginPath();x.moveTo(o.x+i*12,o.y);x.lineTo(o.x+i*12+12,o.y);x.lineTo(o.x+i*12+6,o.y+22);x.fill()}}
+ if(o.ty=='chase')sd(o.x,o.y,18);
+ if(o.ty=='blink'){if(((t+o.ph)%100)<50){x.fillStyle='#1a1010';for(let i=o.x;i<o.x+o.w;i+=10){x.beginPath();x.moveTo(i,410);x.lineTo(i+5,392);x.lineTo(i+10,410);x.fill()}}else{x.strokeStyle='rgba(26,16,16,.35)';x.lineWidth=1;x.strokeRect(o.x,396,o.w,14)}}
+ if(o.ty=='laser'){const c=(t+o.ph)%120;if(c<55){if(c%10<6){x.fillStyle='rgba(26,16,16,.45)';x.fillRect(o.x-1,0,2,410)}}else if(c<85){x.fillStyle='#1a1010';x.fillRect(o.x-7,0,14,410)}}}}
 function hit(a,b){return a.x<b.x+b.w&&a.x+20>b.x&&a.y<b.y+b.h&&a.y+30>b.y}
 function sp(k,f){return hit({x:P.x+f,y:P.y+f},{x:k[0]+4,y:k[1]-20,w:k[2]-8,h:20})&&P.y+30-f>k[1]-18}
 function die(txt){tick();if(lives>=5)nxt=Date.now()+LT;lives--;sv();deaths[lv]++;tot++;const a=A();load();
  msg=txt||TA[Math.floor(Math.random()*TA.length)];mt=100;
- if(a==3){msg='Assist: hazards slowed down';mt=140}
  if(a==4){msg='Stuck? 💡 gives a riddle';mt=140}
 
- if(a==8){msg='Assist: double jump enabled';mt=140}
  if(lives<=0)scr='out'}
 function win(){mx=Math.max(mx,lv+1);save();if(lv<NL-1){lv++;load()}else scr='win'}
-function step(){t++;const v=L[lv],a=A(),m=v.m;
+function step(){t++;const v=L[lv],m=v.m+' '+E.mod;
  for(const p of v.p)if(p[5]){const q=p[5][0]+Math.sin(t*.03*p[5][2])*p[5][1];p.dx=q-p[0];p[0]=q}
  let l=key.l,r=key.r,j=key.j,jmp=j;
  if(m.includes('flip'))[l,r]=[r,l];
@@ -106,30 +125,31 @@ function step(){t++;const v=L[lv],a=A(),m=v.m;
  if(ice)P.vx+=(mv*mxs-P.vx)*.05;else P.vx=mv*mxs;
  const g=low?.25:.6,jv=low?-8.5:-11;
  if(jmp&&!jp)buf=8;jp=jmp;if(buf>0)buf--;
- if(buf>0&&(coy>0||(a>=8&&air))){if(coy<=0)air=0;P.vy=jv;coy=0;buf=0}
+ if(buf>0&&coy>0){P.vy=jv;coy=0;buf=0}
  P.vy=Math.min(P.vy+g,12);
- P.x+=P.vx;P.x=Math.max(0,Math.min(780,P.x));
+ P.x+=P.vx+E.wind;P.x=Math.max(0,Math.min(780,P.x));
  for(const p of v.p){if(!sol(p))continue;const b={x:p[0],y:p[1],w:p[2],h:p[3]};if(hit(P,b)){if(P.vx>0)P.x=b.x-20;else if(P.vx<0)P.x=b.x+b.w}}
  P.y+=P.vy;let gr=0,st=null;
  for(const p of v.p){if(!sol(p))continue;const b={x:p[0],y:p[1],w:p[2],h:p[3]};if(hit(P,b)){if(P.vy>0){P.y=b.y-30;gr=1;st=p;if(p[4]&&cr[p]==null)cr[p]=0}else{P.y=b.y+b.h}P.vy=0}}
  for(const k in cr)cr[k]++;
  if(st&&st.dx)P.x=Math.max(0,Math.min(780,P.x+st.dx));
- if(gr){coy=6+(a>=3?4:0);air=1}else coy--;
+ if(gr)coy=6;else coy--;
  if(P.y<0){P.y=0;P.vy=0}
  if(P.y>470)return die();
- const f=a>=3?4:0;
- for(const k of v.k)if(sp(k,f))return die();
- for(const q of v.t||[]){if(P.x>q[0])tr[q]=1;if(tr[q]&&sp(q.slice(1),f))return die('Surprise! 😈')}
+ for(const k of v.k.concat(E.k))if(sp(k,0))return die();
+ for(const q of (v.t||[]).concat(E.t)){if(P.x>q[0])tr[q]=1;if(tr[q]&&sp(q.slice(1),0))return die('Surprise! 😈')}
  for(const q of v.f||[])if(hit(P,{x:q[0],y:q[1],w:24,h:34}))return die('That door was fake!');
  if(v.tp&&!D.m&&P.x>v.tp[0]){D.x=v.tp[1];D.y=v.tp[2];D.m=1;msg='The door moved...';mt=110}
  for(const q of v.sp||[])if(P.vy>=0&&hit(P,{x:q[0],y:q[1],w:24,h:10}))P.vy=-16;
  if(v.bt&&hit(P,{x:v.bt[0],y:v.bt[1],w:24,h:10}))O=1;
  if(v.ky&&!K&&hit(P,{x:v.ky[0],y:v.ky[1],w:16,h:16})){K=1;msg='Key collected 🔑';mt=90}
  pcd--;if(v.po&&pcd<=0)for(let i=0;i<2;i++)if(hit(P,{x:v.po[i][0],y:v.po[i][1],w:20,h:30})){const o=v.po[1-i];P.x=o[0];P.y=o[1];pcd=40;break}
- const sc=Math.max(.45,1-.07*a);
- for(const w of v.w){const q=Math.sin(t*0.03*w[6]*sc)*w[5],sx=w[0]+w[3]*q,sy=w[1]+w[4]*q,rr=w[2]-(a>=3?3:0);
-  const cx=Math.max(P.x,Math.min(sx,P.x+20)),cy=Math.max(P.y,Math.min(sy,P.y+30));
-  if((cx-sx)**2+(cy-sy)**2<rr*rr)return die()}
+ for(const w of v.w.concat(E.w)){const q=Math.sin(t*.0375*w[6])*w[5];if(cc(w[0]+w[3]*q,w[1]+w[4]*q,w[2]))return die()}
+ for(const o of E.dy){
+  if(o.ty=='drop'){if(!o.on&&P.x>o.x-130)o.on=1;if(o.on){if(o.y<388)o.y+=9;if(hit(P,{x:o.x,y:o.y,w:24,h:22}))return die('Something fell on you')}}
+  else if(o.ty=='chase'){if(o.d>0)o.d--;else o.x+=1.7;if(cc(o.x,o.y,18))return die('It caught you')}
+  else if(o.ty=='blink'){if(((t+o.ph)%100)<50&&sp([o.x,410,o.w],0))return die()}
+  else if(o.ty=='laser'){const c=(t+o.ph)%120;if(c>=55&&c<85&&hit(P,{x:o.x-7,y:0,w:14,h:450}))return die('Zapped ⚡')}}
  if(hit(P,{x:D.x,y:D.y,w:24,h:34})){if(v.lk&&!K){if(mt<=0){msg='Locked! Find the key 🔑';mt=90}}else win()}
 }
 function door(X,Y){x.fillStyle='#d9d9d9';x.fillRect(X,Y,24,34);x.fillStyle='#888';x.fillRect(X+17,Y+16,3,3)}
@@ -144,12 +164,13 @@ function draw(){x.fillStyle='#c4623f';x.fillRect(0,0,800,450);
   if(scr=='win'){txt('You win! 🎉',400,190,40,'#f4a65a');txt('Total deaths: '+tot+'  |  Tap for level menu',400,240,20,'#f4a65a');return}
   txt('FLUX RUNNER',400,52,34,'#f4a65a');txt('Levels unlock as you play',400,76,15,'#c4623f');txt('❤ '+lives+'/5'+(lives<5?'   next life in '+fmt(nxt-Date.now()):''),400,442,16,'#f4a65a');
   for(let i=0;i<NL;i++){const X=40+(i%12)*60,Y=92+Math.floor(i/12)*58,u=i<=mx;if(i<mx){x.fillStyle='rgba(244,166,90,.25)';x.fillRect(X,Y,54,46)}x.strokeStyle=u?'#f4a65a':'#5a3a32';x.lineWidth=2;x.strokeRect(X,Y,54,46);txt(u?''+(i+1):'🔒',X+27,Y+30,17,u?'#f4a65a':'#5a3a32')}return}
- const v=L[lv],a=A(),sc=Math.max(.45,1-.07*a);
+ const v=L[lv];
  for(const p of v.p){if(!sol(p))continue;x.globalAlpha=p[4]&&cr[p]!=null?1-cr[p]/40:1;x.fillStyle=p[4]?'#5a3a32':'#3a2a2a';x.fillRect(p[0],p[1],p[2],p[3])}
  x.globalAlpha=1;x.fillStyle='#1a1010';
  const sk=k=>{for(let i=k[0];i<k[0]+k[2];i+=10){x.beginPath();x.moveTo(i,k[1]);x.lineTo(i+5,k[1]-18);x.lineTo(i+10,k[1]);x.fill()}};
- v.k.forEach(sk);for(const q of v.t||[])if(tr[q])sk(q.slice(1));
- for(const w of v.w){const q=Math.sin(t*0.03*w[6]*sc)*w[5],sx=w[0]+w[3]*q,sy=w[1]+w[4]*q;x.save();x.translate(sx,sy);x.rotate(t*.2);x.beginPath();for(let i=0;i<12;i++){const r=i%2?w[2]-5:w[2]+3,an=i/12*6.283;x.lineTo(Math.cos(an)*r,Math.sin(an)*r)}x.fill();x.fillStyle='#c4623f';x.fillRect(-3,-3,6,6);x.restore();x.fillStyle='#1a1010'}
+ v.k.concat(E.k).forEach(sk);for(const q of (v.t||[]).concat(E.t))if(tr[q])sk(q.slice(1));
+ for(const w of v.w.concat(E.w)){const q=Math.sin(t*.0375*w[6])*w[5];sd(w[0]+w[3]*q,w[1]+w[4]*q,w[2])}
+ drawDy();x.fillStyle='#1a1010';
  x.fillStyle='#f4a65a';for(const q of v.sp||[])x.fillRect(q[0],q[1]+2,24,8);
  if(v.bt){x.fillStyle=O?'#555':'#d33';x.fillRect(v.bt[0],v.bt[1]+2,24,8)}
  if(v.ky&&!K){x.fillStyle='#e8c14a';x.fillRect(v.ky[0],v.ky[1],16,8);x.fillRect(v.ky[0]+10,v.ky[1],4,16)}
