@@ -17,7 +17,7 @@ Go to the Releases page and download the latest `FluxRunner.apk`. New builds ins
 - Level select with progress saved locally, no login needed
 - Lives system: 5 lives, one regenerates every 20 minutes (a full refill takes 100 minutes), or watch a rewarded ad for +1 life
 - Cryptic riddle-style hints, unlocked by watching a rewarded ad. There is no level skipping
-- Light adaptive assist: after repeated deaths on a level, hazards slow down and hitboxes become more forgiving, and after 8 deaths a double jump is enabled
+- No assist, no mercy: difficulty never drops. Every death changes the level with a new trap (10 different trap types: pop-up spikes, rolling saws, falling spikes, ceiling saws, a chaser, spikes by the door, wind, blinking spikes, lasers, and swapped controls). After 5 deaths two traps stack.
 - Touch controls (multi-touch) and keyboard support (arrows, WASD, Space)
 - Installable PWA with offline support
 - Native Android app built with Kotlin, signed APKs built automatically with GitHub Actions
