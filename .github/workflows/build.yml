@@ -45,12 +45,14 @@ jobs:
         run: |
           mkdir -p app/src/main/assets
           cp index.html manifest.json sw.js icon.svg app/src/main/assets/
-          echo "$KS_B64" | base64 -d > flux.jks
+          echo "$KS_B64" | tr -d '[:space:]' | base64 -d > flux.jks
+          echo "KSP_CLEAN=$(echo -n "$KSP" | tr -d '[:space:]')" >> $GITHUB_ENV
 
       - name: Build signed APK
         env:
           VC: ${{ github.run_number }}
           KS_PATH: ${{ github.workspace }}/flux.jks
+          KSP: ${{ env.KSP_CLEAN }}
         run: gradle assembleRelease --no-daemon
 
       - name: Rename APK
