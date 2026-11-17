@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['index.html', 'manifest.json', 'sw.js', 'icon.svg', 'app/**', 'build.gradle.kts', 'settings.gradle.kts', '.github/workflows/build.yml']
+    paths: ['game.zip', 'index.html', 'lang.js', 'salts.js', 'manifest.json', 'sw.js', 'icon.svg', 'app/**', 'build.gradle.kts', 'settings.gradle.kts', '.github/workflows/build.yml']
 permissions:
   contents: write
 jobs:
@@ -41,10 +41,14 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with: { gradle-version: 8.7 }
 
+      - name: Unpack game.zip (every file goes to its right place)
+        run: |
+          if [ -f game.zip ]; then unzip -o game.zip -x ".github/*" "tools/*" "PRIVACY.md"; fi
+
       - name: Copy game files into app
         run: |
           mkdir -p app/src/main/assets
-          cp index.html manifest.json sw.js icon.svg app/src/main/assets/
+          cp index.html lang.js salts.js manifest.json sw.js icon.svg app/src/main/assets/
           echo "$KS_B64" | tr -d '[:space:]' | base64 -d > flux.jks
           echo "KSP_CLEAN=$(echo -n "$KSP" | tr -d '[:space:]')" >> $GITHUB_ENV
 
